@@ -1344,38 +1344,145 @@
       transform: translateY(0);
     }
 
-    @media (max-width: 768px) {
-      .theme-toggle {
-        top: 80px;
-        right: 1rem;
+    @media (max-width: 1024px){
+      nav,
+      .hero,
+      .trending-section,
+      .articles-section,
+      .categories-section,
+      .how-section,
+      .testi-section,
+      .cta-section,
+      footer,
+      .footer-bottom{
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
       }
 
-      .articles-grid {
+      .articles-grid{
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .categories-grid {
+      .categories-grid,
+      .how-grid,
+      .testi-grid{
         grid-template-columns: 1fr;
       }
 
-      .how-grid {
+      .trending-grid{
         grid-template-columns: 1fr;
       }
 
-      .testi-grid {
+      .hero{
+        padding-bottom: 4rem;
+      }
+
+      .hero-stats,
+      .hero-flag{
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px){
+      nav{
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+      }
+
+      .nav-links{
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+      }
+
+      .hero-title{
+        font-size: clamp(2.6rem, 12vw, 4.2rem);
+      }
+
+      .hero-sub,
+      .section-desc,
+      .articles-right,
+      .footer-tagline{
+        max-width: 100%;
+        font-size: 0.95rem;
+      }
+
+      .hero-actions,
+      .cta-actions,
+      .articles-footer{
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .articles-grid{
         grid-template-columns: 1fr;
+      }
+
+      .article-card,
+      .category-card,
+      .category-main,
+      .how-step,
+      .testi-card{
+        min-height: auto;
+      }
+
+      .top-ticker{
+        height: 48px;
+      }
+
+      body{
+        padding-top: 48px;
+      }
+    }
+
+    @media (max-width: 480px){
+      .hero{
+        padding-top: 2rem;
+        padding-bottom: 3rem;
+      }
+
+      .section-title,
+      .cta-title{
+        font-size: 1.8rem;
+      }
+
+      .nav-cta,
+      .btn-primary,
+      .btn-outline,
+      .btn-more,
+      .category-btn{
+        width: 100%;
+        text-align: center;
+      }
+
+      .theme-switcher{
+        right: 0.5rem;
+      }
+
+      .theme-btn{
+        padding: 0.3rem 0.45rem;
       }
     }
   </style>
 </head>
 <body>
 
-<!-- THEME TOGGLE -->
-<div class="theme-toggle">
-  <button class="theme-btn active" id="lightBtn" title="Mode clair"> ☀️</button>
-  <button class="theme-btn" id="darkBtn" title="Mode sombre">🌙</button>
+<!-- BARRE DÉFILANTE + THÈME -->
+<div class="top-ticker">
+  <div class="ticker-track">
+    <span>🇨🇮 BlogCIV • Actualités en direct • Politique • TikTok • People • Business • </span>
+    <span>🇨🇮 BlogCIV • Actualités en direct • Politique • TikTok • People • Business • </span>
+  </div>
+
+  <div class="theme-switcher">
+    <button class="theme-btn active" id="lightBtn" title="Mode clair">☀️</button>
+    <button class="theme-btn" id="darkBtn" title="Mode sombre">🌙</button>
+  </div>
 </div>
 
+<!-- SUPPRIMER l'ancien bloc .theme-toggle -->
 <!-- LOADING PAGE -->
 <div class="loader-wrapper">
   <div class="loader-content">
