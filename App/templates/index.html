@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlogCIV — L'Actualité en Direct de Côte d'Ivoire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --orange: #F47B20;
+      --orange-dark: #C85F0A;
+      --orange-light: #FFA64D;
+      --orange-pale: #FFF3E8;
+      --green: #1A7A3C;
+      --green-dark: #0F5228;
+      --green-light: #2EAD5A;
+      --green-pale: #E8F7EE;
+      --white: #FFFFFF;
+      --cream: #FAFAF7;
+      --sand: #F5F0E8;
+      --dark: #1A1410;
+      --text: #2D2417;
+      --muted: #7A6B58;
+      --border: rgba(244,123,32,0.15);
+    }
+
+    body.dark-mode {
+      --cream: #0F0C08;
+      --sand: #1A1410;
+      --white: #E8E8E8;
+      --text: #E8E8E8;
+      --muted: #A89F8E;
+      --border: rgba(244,123,32,0.25);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { 
+      font-family: 'DM Sans', sans-serif; 
+      background: var(--cream); 
+      color: var(--text); 
+      overflow-x: hidden;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* THEME TOGGLE */
+    .theme-toggle {
+      position: fixed;
+      top: 100px;
+      right: 2rem;
+      z-index: 99;
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.1);
+      padding: 0.8rem;
+      border-radius: 2rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(244,123,32,0.2);
+      animation: slideInRight 0.6s ease-out 2.8s backwards;
+    }
+
+    .theme-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: all 0.3s ease;
+      color: var(--orange);
+    }
+
+    .theme-btn:hover {
+      transform: scale(1.2) rotate(20deg);
+      color: var(--orange-light);
+    }
+
+    .theme-btn.active {
+      background: rgba(244,123,32,0.2);
+      border-radius: 50%;
+    }
+
+    @keyframes slideInRight {
+      from { 
+        opacity: 0; 
+        transform: translateX(100px);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateX(0);
+      }
+    }
+
+    /* LOADING PAGE */
+    .loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #FAFAF7 0%, #FFF3E8 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeOutLoader 0.6s ease-in-out 2.4s forwards;
+    }
+    
+    body.dark-mode .loader-wrapper {
+      background: linear-gradient(135deg, #1A1410 0%, #0F0C08 100%);
+    }
+
+    @keyframes fadeOutLoader {
+      to { opacity: 0; visibility: hidden; }
+    }
+    .loader-content {
+      text-align: center;
+    }
+    .loader-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      letter-spacing: 0.12em;
+      background: linear-gradient(130deg, #C85F0A, #F47B20, #FFA64D);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 1.5rem;
+      animation: slideInDown 0.8s ease-out, float 3s ease-in-out 0.8s infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes slideInDown {
+      from { transform: translateY(-30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .loader-spinner {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 2rem;
+    }
+    .spinner-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--orange);
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+    .spinner-dot:nth-child(1) { animation-delay: -0.32s; }
+    .spinner-dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    .loader-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #8B5A2B;
+      letter-spacing: 2px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(250,250,247,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      animation: slideDown 0.6s ease-out;
+      transition: background 0.4s ease;
+    }
+
+    body.dark-mode nav {
+      background: rgba(15,12,8,0.92);
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.12em;
+      color: var(--orange);
+      display: flex; align-items: center; gap: 0.5rem;
+      animation: fadeUp 0.8s ease 0.2s backwards;
+    }
+    .logo span { color: var(--green); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { 
+      text-decoration: none; 
+      color: var(--text); 
+      font-size: 0.85rem; 
+      font-weight: 500; 
+      letter-spacing: 0.04em; 
+      transition: all 0.3s;
+      position: relative;
+    }
+    
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--orange);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color: var(--orange); }
+    
+    .nav-cta {
+      background: var(--orange); 
+      color: var(--white);
+      border: none; 
+      padding: 0.65rem 1.6rem;
+      border-radius: 2rem; 
+      font-size: 0.85rem; 
+      font-weight: 500;
+      cursor: pointer; 
+      transition: all 0.3s;
+      font-family: 'DM Sans', sans-serif; 
+      letter-spacing: 0.03em;
+      animation: fadeUp 0.8s ease 0.4s backwards;
+    }
+    
+    .nav-cta:hover { 
+      background: var(--orange-dark); 
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(244,123,32,0.3);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #1A1410 0%, #2D1A08 40%, #1A3D28 100%);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 4rem 6rem;
+      animation: fadeIn 0.8s 2.4s ease-out backwards;
+      transition: background 0.5s ease;
+    }
+
+    body.dark-mode .hero {
+      background: linear-gradient(160deg, #0F0C08 0%, #1A1410 40%, #0F2715 100%);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 60%, rgba(244,123,32,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 75% 30%, rgba(26,122,60,0.22) 0%, transparent 55%);
+      animation: gradientShift 15s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { opacity: 1; }
+      50% { opacity: 0.8; }
+      100% { opacity: 1; }
+    }
+
+    .hero-pattern {
+      position: absolute; inset: 0; opacity: 0.04;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(255,255,255,0.5) 30px, rgba(255,255,255,0.5) 31px),
+                        repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(255,255,255,0.5) 30px, rgba(255,255,255,0.5) 31px);
+    }
+    
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(244,123,32,0.2); border: 1px solid rgba(244,123,32,0.4);
+      color: var(--orange-light); padding: 0.4rem 1rem; border-radius: 2rem;
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      font-weight: 500; margin-bottom: 1.5rem; width: fit-content;
+      animation: fadeUp 0.8s ease both 2.4s, glowPulse 2.5s ease-in-out 2.4s infinite;
+    }
+    
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(244,123,32,0.3); }
+      50% { box-shadow: 0 0 20px rgba(244,123,32,0.6); }
+    }
+
+    .hero-badge::before { 
+      content: ''; 
+      width: 6px; 
+      height: 6px; 
+      background: var(--orange-light); 
+      border-radius: 50%;
+      animation: blink 1.5s infinite 2.4s;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(4rem, 10vw, 9rem);
+      font-weight: 900; line-height: 0.92;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s 2.55s ease both, titleShine 3s ease-in-out 2.55s;
+    }
+    
+    @keyframes titleShine {
+      0%, 100% { text-shadow: 0 0 10px rgba(244,123,32,0.3); }
+      50% { text-shadow: 0 0 30px rgba(244,123,32,0.6); }
+    }
+
+    .hero-title em { font-style: italic; color: var(--orange); }
+    .hero-title .accent { color: var(--green-light); display: block; }
+    
+    .hero-sub {
+      max-width: 520px; font-size: 1rem; color: rgba(255,255,255,0.65);
+      line-height: 1.7; margin-bottom: 2.5rem;
+      animation: fadeUp 0.8s 2.7s ease both;
+    }
+    
+    .hero-actions {
+      display: flex; gap: 1rem; align-items: center;
+      animation: fadeUp 0.8s 2.85s ease both;
+    }
+    
+    .btn-primary {
+      background: var(--orange); color: var(--white);
+      padding: 0.9rem 2.2rem; border-radius: 3rem;
+      border: none; font-size: 0.9rem; font-weight: 500;
+      cursor: pointer; transition: all 0.3s;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none; display: inline-block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.2);
+      transition: left 0.5s ease;
+    }
+
+    .btn-primary:hover::before { left: 100%; }
+    .btn-primary:hover { 
+      background: var(--orange-dark); 
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(244,123,32,0.4);
+    }
+    
+    .btn-outline {
+      border: 1.5px solid rgba(255,255,255,0.35); color: var(--white);
+      padding: 0.9rem 2.2rem; border-radius: 3rem;
+      background: transparent; font-size: 0.9rem; font-weight: 400;
+      cursor: pointer; transition: all 0.3s;
+      font-family: 'DM Sans', sans-serif; text-decoration: none; display: inline-block;
+    }
+    
+    .btn-outline:hover { 
+      border-color: rgba(255,255,255,0.7); 
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-3px);
+    }
+
+    .hero-flag {
+      position: absolute; right: 4rem; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 0; border-radius: 0.5rem; overflow: hidden;
+      width: 200px; height: 133px; opacity: 0.12;
+      box-shadow: 0 0 80px rgba(244,123,32,0.3);
+      animation: floatFlag 4s ease-in-out infinite;
+    }
+
+    @keyframes floatFlag {
+      0%, 100% { transform: translateY(-50%); }
+      50% { transform: translateY(-70px); }
+    }
+
+    .flag-orange { flex: 1; background: var(--orange); }
+    .flag-white { flex: 1; background: #fff; }
+    .flag-green { flex: 1; background: var(--green); }
+    
+    .hero-stats {
+      position: absolute; right: 4rem; bottom: 6rem;
+      display: flex; flex-direction: column; gap: 1.5rem;
+      animation: fadeLeft 0.8s 3s ease both;
+    }
+    
+    .stat-item { 
+      text-align: right;
+      animation: slideInLeft 0.6s ease backwards;
+    }
+
+    .stat-item:nth-child(1) { animation-delay: 3.1s; }
+    .stat-item:nth-child(2) { animation-delay: 3.2s; }
+    .stat-item:nth-child(3) { animation-delay: 3.3s; }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .stat-num { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 2rem; 
+      font-weight: 700; 
+      color: var(--orange-light);
+      animation: countUp 2s ease-out 3s;
+    }
+    
+    @keyframes countUp {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .stat-label { 
+      font-size: 0.75rem; 
+      color: rgba(255,255,255,0.5); 
+      letter-spacing: 0.05em; 
+    }
+
+    @keyframes fadeLeft {
+      from { opacity: 0; transform: translateX(24px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: rgba(255,255,255,0.35); font-size: 0.7rem; letter-spacing: 0.1em;
+      text-transform: uppercase; animation: bounce 2s infinite 2.8s;
+    }
+    
+    .scroll-line { 
+      width: 1px; 
+      height: 40px; 
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+      animation: scrollMove 1.5s ease-in-out infinite;
+    }
+
+    @keyframes scrollMove {
+      0%, 100% { opacity: 0; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(10px); }
+    }
+
+    /* SECTION: TRENDING */
+    .trending-section { 
+      padding: 7rem 4rem; 
+      background: var(--white);
+      transition: background 0.4s ease;
+    }
+
+    body.dark-mode .trending-section {
+      background: #1A1410;
+    }
+
+    .section-label {
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--orange); font-weight: 500; margin-bottom: 1rem;
+    }
+    
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700; line-height: 1.15;
+      max-width: 580px; margin-bottom: 1.5rem;
+    }
+    
+    .section-desc { 
+      max-width: 520px; 
+      color: var(--muted); 
+      line-height: 1.75; 
+      margin-bottom: 3rem;
+      transition: color 0.4s ease;
+    }
+    
+    .trending-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    .trending-text { }
+    
+    .socials { display: flex; gap: 1rem; margin-top: 1rem; }
+    
+    .social-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; color: var(--muted); cursor: pointer;
+      transition: all 0.3s; text-decoration: none;
+    }
+    
+    .social-icon:hover { 
+      border-color: var(--orange); 
+      color: var(--orange);
+      transform: translateY(-5px) rotate(10deg);
+      background: rgba(244,123,32,0.1);
+    }
+    
+    .metrics { 
+      display: flex; 
+      gap: 2.5rem; 
+      margin-top: 3rem; 
+      padding-top: 2.5rem; 
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.8s ease;
+    }
+    
+    .metric-num { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 2.2rem; 
+      font-weight: 700; 
+      color: var(--text);
+    }
+    
+    .metric-unit { color: var(--orange); }
+    
+    .metric-label { 
+      font-size: 0.8rem; 
+      color: var(--muted); 
+      margin-top: 0.2rem;
+    }
+    
+    .features-col { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 1.2rem;
+    }
+    
+    .feature-card {
+      background: var(--cream); 
+      border-radius: 1rem;
+      padding: 1.4rem 1.6rem;
+      display: flex; 
+      align-items: flex-start; 
+      gap: 1.2rem;
+      transition: all 0.3s;
+      border: 1px solid transparent;
+      animation: fadeUp 0.6s ease backwards;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+
+    body.dark-mode .feature-card {
+      background: #2D2417;
+    }
+
+    .feature-card:hover { 
+      transform: translateX(10px) translateY(-5px);
+      border-color: var(--border);
+      box-shadow: 0 10px 30px rgba(244,123,32,0.15);
+    }
+    
+    .feature-icon {
+      width: 48px; height: 48px; flex-shrink: 0;
+      border-radius: 0.8rem; display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      animation: rotate 3s linear infinite;
+    }
+
+    .feature-icon.orange { background: var(--orange-pale); }
+    .feature-icon.green { background: var(--green-pale); }
+
+    @keyframes rotate {
+      0%, 100% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .feature-title { 
+      font-weight: 600; 
+      font-size: 0.95rem; 
+      margin-bottom: 0.3rem; 
+      color: var(--text);
+    }
+    
+    .feature-desc { 
+      font-size: 0.82rem; 
+      color: var(--muted); 
+      line-height: 1.6;
+    }
+
+    /* ARTICLES */
+    .articles-section { 
+      padding: 7rem 4rem; 
+      background: var(--cream);
+      transition: background 0.4s ease;
+    }
+
+    body.dark-mode .articles-section {
+      background: #0F0C08;
+    }
+
+    .articles-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: flex-end; 
+      margin-bottom: 3rem;
+    }
+    
+    .articles-right { 
+      max-width: 340px; 
+      text-align: right; 
+      color: var(--muted); 
+      font-size: 0.9rem; 
+      line-height: 1.7;
+    }
+    
+    .articles-grid { 
+      display: grid; 
+      grid-template-columns: repeat(4, 1fr); 
+      gap: 1.2rem;
+    }
+    
+    .article-card {
+      border-radius: 1.2rem; overflow: hidden;
+      position: relative; cursor: pointer;
+      transition: all 0.4s;
+      aspect-ratio: 3/4;
+      animation: fadeUp 0.6s ease backwards;
+    }
+
+    .article-card:nth-child(1) { animation-delay: 0.1s; }
+    .article-card:nth-child(2) { animation-delay: 0.2s; }
+    .article-card:nth-child(3) { animation-delay: 0.3s; }
+    .article-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .article-card:hover { 
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 30px 60px rgba(26,20,16,0.3);
+    }
+    
+    .article-card .bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+    }
+    
+    .article-card .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(26,20,16,0.85) 0%, rgba(26,20,16,0.1) 60%, transparent 100%);
+      transition: background 0.3s ease;
+    }
+
+    .article-card:hover .overlay {
+      background: linear-gradient(to top, rgba(26,20,16,0.95) 0%, rgba(26,20,16,0.2) 60%, transparent 100%);
+    }
+
+    .article-card .category-tag {
+      position: absolute; top: 1rem; right: 1rem;
+      background: rgba(250,250,247,0.15); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white; font-size: 0.72rem; font-weight: 500;
+      padding: 0.3rem 0.75rem; border-radius: 2rem;
+      animation: slideInDown 0.5s ease;
+    }
+    
+    .article-info { 
+      position: absolute; 
+      bottom: 1.2rem; 
+      left: 1.2rem; 
+      right: 1.2rem;
+    }
+    
+    .article-title { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 1.4rem; 
+      font-weight: 700; 
+      color: white; 
+      line-height: 1.1;
+    }
+    
+    .article-meta { 
+      font-size: 0.72rem; 
+      color: rgba(255,255,255,0.65); 
+      margin-top: 0.2rem;
+    }
+    
+    .article-date { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+      margin-top: 0.6rem;
+    }
+    
+    .date-badge { 
+      color: var(--orange-light); 
+      font-size: 0.75rem;
+    }
+    
+    .view-count { 
+      font-size: 0.75rem; 
+      color: rgba(255,255,255,0.8); 
+      font-weight: 500;
+    }
+    
+    .articles-footer { 
+      margin-top: 2rem; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+    }
+    
+    .btn-more {
+      background: var(--dark); 
+      color: var(--white);
+      padding: 0.75rem 1.8rem; 
+      border-radius: 2rem;
+      border: none; 
+      font-size: 0.85rem; 
+      font-weight: 500;
+      cursor: pointer; 
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.3s;
+    }
+    
+    .btn-more:hover { 
+      background: var(--orange-dark);
+      transform: translateY(-3px);
+    }
+
+    /* ARTICLE COLORS */
+    .article-politique .bg { background: linear-gradient(135deg, #1a3d28 0%, #F47B20 100%); }
+    .article-tiktok .bg { background: linear-gradient(135deg, #2D1A08 0%, #1A3D28 100%); }
+    .article-people .bg { background: linear-gradient(135deg, #0F2744 0%, #1a7a3c 100%); }
+    .article-tech .bg { background: linear-gradient(135deg, #3D1A08 0%, #8B4513 100%); }
+
+    /* CATEGORIES */
+    .categories-section { 
+      padding: 7rem 4rem; 
+      background: var(--white);
+      transition: background 0.4s ease;
+    }
+
+    body.dark-mode .categories-section {
+      background: #1A1410;
+    }
+
+    .categories-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1.1fr 1.1fr; 
+      gap: 1.5rem; 
+      margin-top: 3rem;
+    }
+    
+    .category-main {
+      background: linear-gradient(145deg, #1A3D28, #0F5228);
+      border-radius: 1.5rem; 
+      padding: 2.5rem; 
+      position: relative; 
+      overflow: hidden;
+      display: flex; 
+      flex-direction: column; 
+      justify-content: flex-end;
+      min-height: 340px;
+      animation: fadeUp 0.6s ease;
+      transition: all 0.3s;
+    }
+
+    .category-main:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(244,123,32,0.2);
+    }
+
+    .category-main::before {
+      content: ''; 
+      position: absolute; 
+      top: -40px; 
+      right: -40px;
+      width: 180px; 
+      height: 180px;
+      background: rgba(244,123,32,0.15); 
+      border-radius: 50%;
+      animation: rotatePulse 8s ease-in-out infinite;
+    }
+
+    @keyframes rotatePulse {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+    }
+
+    .category-label { 
+      font-size: 0.72rem; 
+      letter-spacing: 0.12em; 
+      text-transform: uppercase; 
+      color: rgba(255,255,255,0.6); 
+      margin-bottom: 0.8rem;
+    }
+    
+    .category-title { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 2rem; 
+      font-weight: 700; 
+      color: white; 
+      line-height: 1.2; 
+      margin-bottom: 0.8rem;
+    }
+    
+    .category-desc { 
+      font-size: 0.83rem; 
+      color: rgba(255,255,255,0.65); 
+      line-height: 1.65; 
+      margin-bottom: 2rem;
+    }
+    
+    .category-btn {
+      background: var(--orange); 
+      color: white;
+      border: none; 
+      padding: 0.75rem 1.8rem;
+      border-radius: 2rem; 
+      font-size: 0.85rem; 
+      font-weight: 500;
+      cursor: pointer; 
+      font-family: 'DM Sans', sans-serif;
+      width: fit-content; 
+      transition: all 0.3s;
+    }
+    
+    .category-btn:hover { 
+      background: var(--orange-dark);
+      transform: translateY(-2px);
+    }
+    
+    .category-card {
+      border-radius: 1.2rem; 
+      overflow: hidden; 
+      position: relative;
+      min-height: 340px; 
+      cursor: pointer; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: flex-end;
+      transition: all 0.4s;
+      animation: fadeUp 0.6s ease backwards;
+    }
+
+    .category-card:nth-child(2) { animation-delay: 0.1s; }
+    .category-card:nth-child(3) { animation-delay: 0.2s; }
+
+    .category-card:hover { 
+      transform: scale(1.05);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+    
+    .cat-bg { 
+      position: absolute; 
+      inset: 0; 
+      background-size: cover; 
+      background-position: center;
+    }
+    
+    .cat-bg-peoples { background: linear-gradient(145deg, #1A7A3C, #F47B20); }
+    .cat-bg-breaking { background: linear-gradient(145deg, #8B4513, #2D1A08); }
+    
+    .cat-overlay { 
+      position: absolute; 
+      inset: 0; 
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+      transition: background 0.3s ease;
+    }
+
+    .category-card:hover .cat-overlay {
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+    }
+
+    .cat-content { 
+      position: relative; 
+      z-index: 1; 
+      padding: 1.5rem;
+    }
+    
+    .cat-icon {
+      width: 36px; 
+      height: 36px; 
+      border-radius: 50%;
+      background: rgba(244,123,32,0.3); 
+      backdrop-filter: blur(4px);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-size: 1rem; 
+      margin-bottom: 0.8rem;
+      border: 1px solid rgba(244,123,32,0.5);
+      animation: bounce 2s infinite;
+    }
+    
+    .cat-title { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 1.3rem; 
+      font-weight: 700; 
+      color: white; 
+      line-height: 1.2; 
+      margin-bottom: 0.5rem;
+    }
+    
+    .cat-desc { 
+      font-size: 0.78rem; 
+      color: rgba(255,255,255,0.7); 
+      line-height: 1.6;
+    }
+
+    /* HOW IT WORKS */
+    .how-section { 
+      padding: 7rem 4rem; 
+      background: var(--sand);
+      transition: background 0.4s ease;
+    }
+
+    body.dark-mode .how-section {
+      background: #2D2417;
+    }
+
+    .how-grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 2rem; 
+      margin-top: 4rem;
+    }
+    
+    .how-step { 
+      position: relative; 
+      padding: 2rem 1.5rem;
+      animation: fadeUp 0.6s ease backwards;
+    }
+
+    .how-step:nth-child(1) { animation-delay: 0.1s; }
+    .how-step:nth-child(2) { animation-delay: 0.2s; }
+    .how-step:nth-child(3) { animation-delay: 0.3s; }
+
+    .how-step::after {
+      content: '→'; 
+      position: absolute; 
+      right: -1rem; 
+      top: 2.5rem;
+      font-size: 1.5rem; 
+      color: rgba(244,123,32,0.3);
+      animation: arrowMove 1.5s ease-in-out infinite;
+    }
+
+    @keyframes arrowMove {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(10px); }
+    }
+
+    .how-step:last-child::after { display: none; }
+    
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif; 
+      font-size: 4rem;
+      color: rgba(244,123,32,0.12); 
+      line-height: 1; 
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    
+    .step-circle {
+      width: 52px; 
+      height: 52px; 
+      border-radius: 50%;
+      background: var(--orange-pale); 
+      border: 2px solid var(--orange);
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-size: 1.2rem; 
+      margin-bottom: 1.2rem;
+      margin-top: -3.5rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .step-title { 
+      font-family: 'Playfair Display', serif; 
+      font-size: 1.2rem; 
+      font-weight: 700; 
+      margin-bottom: 0.7rem;
+    }
+    
+    .step-desc { 
+      font-size: 0.84rem; 
+      color: var(--muted); 
+      line-height: 1.7;
+    }
+
+    /* TESTIMONIALS */
+    .testi-section { 
+      padding: 7rem 4rem; 
+      background: var(--dark); 
+      position: relative; 
+      overflow: hidden;
+      transition: background 0.4s ease;
+    }
+
+    body.dark-mode .testi-section {
+      background: #0F0C08;
+    }
+
+    .testi-section::before {
+      content: ''; 
+      position: absolute; 
+      top: -100px; 
+      left: -100px;
+      width: 400px; 
+      height: 400px;
+      background: radial-gradient(circle, rgba(244,123,32,0.08) 0%, transparent 70%);
+      animation: floatBg 20s ease-in-out infinite;
+    }
+
+    @keyframes floatBg {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(50px, 50px); }
+    }
+
+    .testi-section .section-label { color: var(--orange-light); }
+    .testi-section .section-title { color: white; }
+    
+    .testi-grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 1.5rem; 
+      margin-top: 3rem;
+    }
+    
+    .testi-card {
+      background: rgba(255,255,255,0.04); 
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.2rem; 
+      padding: 1.8rem;
+      transition: all 0.4s;
+      animation: fadeUp 0.6s ease backwards;
+    }
+
+    .testi-card:nth-child(1) { animation-delay: 0.1s; }
+    .testi-card:nth-child(2) { animation-delay: 0.2s; }
+    .testi-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .testi-card:hover { 
+      border-color: rgba(244,123,32,0.3); 
+      background: rgba(244,123,32,0.08);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(244,123,32,0.2);
+    }
+    
+    .testi-stars { 
+      color: var(--orange); 
+      font-size: 0.85rem; 
+      margin-bottom: 1rem;
+      animation: starGlow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes starGlow {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+
+    .testi-text { 
+      font-size: 0.88rem; 
+      color: rgba(255,255,255,0.7); 
+      line-height: 1.75; 
+      margin-bottom: 1.5rem; 
+      font-style: italic;
+    }
+    
+    .testi-author { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.8rem;
+    }
+    
+    .author-avatar {
+      width: 38px; 
+      height: 38px; 
+      border-radius: 50%;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-weight: 600; 
+      font-size: 0.85rem; 
+      color: white;
+      animation: rotateBg 8s linear infinite;
+    }
+    
+    .av-orange { background: var(--orange); }
+    .av-green { background: var(--green); }
+    .av-dark { background: #5A3E2B; }
+    
+    .author-name { 
+      font-weight: 500; 
+      font-size: 0.85rem; 
+      color: white;
+    }
+    
+    .author-loc { 
+      font-size: 0.75rem; 
+      color: rgba(255,255,255,0.45); 
+      margin-top: 0.1rem;
+    }
+
+    /* CTA */
+    .cta-section {
+      padding: 7rem 4rem;
+      background: linear-gradient(135deg, var(--orange) 0%, var(--orange-dark) 50%, #7A2D00 100%);
+      position: relative; 
+      overflow: hidden; 
+      text-align: center;
+      transition: all 0.4s ease;
+    }
+
+    body.dark-mode .cta-section {
+      background: linear-gradient(135deg, #C85F0A 0%, #8B4513 50%, #3D2614 100%);
+    }
+
+    .cta-section::before {
+      content: 'BLOGCIV'; 
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20vw; 
+      color: rgba(255,255,255,0.05);
+      position: absolute; 
+      bottom: -2rem; 
+      left: 50%; 
+      transform: translateX(-50%);
+      white-space: nowrap; 
+      letter-spacing: 0.05em; 
+      line-height: 1;
+      animation: textMove 20s linear infinite;
+    }
+
+    @keyframes textMove {
+      0%, 100% { opacity: 0.05; }
+      50% { opacity: 0.08; }
+    }
+
+    .cta-title { 
+      font-family: 'Playfair Display', serif; 
+      font-size: clamp(2.5rem, 5vw, 4rem); 
+      font-weight: 900; 
+      color: white; 
+      line-height: 1.1; 
+      margin-bottom: 1.2rem;
+      animation: fadeUp 0.8s ease;
+    }
+    
+    .cta-sub { 
+      font-size: 1rem; 
+      color: rgba(255,255,255,0.75); 
+      margin-bottom: 2.5rem; 
+      max-width: 500px; 
+      margin-left: auto; 
+      margin-right: auto;
+      animation: fadeUp 0.8s ease 0.1s backwards;
+    }
+    
+    .cta-actions { 
+      display: flex; 
+      gap: 1rem; 
+      justify-content: center;
+      animation: fadeUp 0.8s ease 0.2s backwards;
+    }
+    
+    .cta-btn-white {
+      background: white; 
+      color: var(--orange-dark);
+      border: none; 
+      padding: 0.9rem 2.5rem; 
+      border-radius: 3rem;
+      font-size: 0.9rem; 
+      font-weight: 600; 
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif; 
+      transition: all 0.3s;
+    }
+    
+    .cta-btn-white:hover { 
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+    
+    .cta-btn-ghost {
+      background: transparent; 
+      color: white;
+      border: 1.5px solid rgba(255,255,255,0.5); 
+      padding: 0.9rem 2.5rem; 
+      border-radius: 3rem;
+      font-size: 0.9rem; 
+      font-weight: 400; 
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif; 
+      transition: all 0.3s;
+    }
+    
+    .cta-btn-ghost:hover { 
+      border-color: white; 
+      background: rgba(255,255,255,0.15);
+      transform: translateY(-5px);
+    }
+
+    /* FOOTER */
+    footer {
+      background: #0F0C08; 
+      padding: 4rem;
+      display: grid; 
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 3rem; 
+      color: rgba(255,255,255,0.5);
+      transition: background 0.4s ease;
+    }
+
+    body.dark-mode footer {
+      background: #000000;
+    }
+
+    .footer-brand .logo { 
+      font-size: 1.5rem; 
+      margin-bottom: 1rem;
+    }
+    
+    .footer-tagline { 
+      font-size: 0.82rem; 
+      line-height: 1.65; 
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .footer-col-title { 
+      font-size: 0.75rem; 
+      letter-spacing: 0.1em; 
+      text-transform: uppercase; 
+      color: rgba(255,255,255,0.6); 
+      margin-bottom: 1.2rem; 
+      font-weight: 500;
+    }
+    
+    .footer-links { 
+      list-style: none; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 0.6rem;
+    }
+    
+    .footer-links a { 
+      text-decoration: none; 
+      color: rgba(255,255,255,0.4); 
+      font-size: 0.83rem; 
+      transition: all 0.3s;
+    }
+    
+    .footer-links a:hover { 
+      color: var(--orange-light);
+      transform: translateX(5px);
+    }
+    
+    .footer-bottom { 
+      background: #080604; 
+      padding: 1.5rem 4rem; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      color: rgba(255,255,255,0.3); 
+      font-size: 0.78rem;
+      transition: background 0.4s ease;
+    }
+
+    body.dark-mode .footer-bottom {
+      background: #000000;
+    }
+
+    /* STRIPE */
+    .flag-stripe {
+      height: 6px; 
+      display: flex;
+    }
+    .flag-stripe div { flex: 1; }
+    .stripe-o { background: var(--orange); }
+    .stripe-w { background: white; }
+    .stripe-g { background: var(--green); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-6px); }
+    }
+
+    /* KENTE DECORATIVE STRIP */
+    .kente-strip {
+      height: 8px;
+      background: repeating-linear-gradient(90deg,
+        var(--orange) 0px, var(--orange) 16px,
+        white 16px, white 32px,
+        var(--green) 32px, var(--green) 48px,
+        var(--orange-dark) 48px, var(--orange-dark) 64px,
+        white 64px, white 80px,
+        var(--green-dark) 80px, var(--green-dark) 96px
+      );
+      animation: slideStripe 10s linear infinite;
+    }
+
+    @keyframes slideStripe {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(100px); }
+    }
+
+    /* SCROLL ANIMATIONS */
+    .fade-in-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .theme-toggle {
+        top: 80px;
+        right: 1rem;
+      }
+
+      .articles-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .categories-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .how-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- THEME TOGGLE -->
+<div class="theme-toggle">
+  <button class="theme-btn active" id="lightBtn" title="Mode clair"> ☀️</button>
+  <button class="theme-btn" id="darkBtn" title="Mode sombre">🌙</button>
+</div>
+
+<!-- LOADING PAGE -->
+<div class="loader-wrapper">
+  <div class="loader-content">
+    <div class="loader-logo">BLOG<span style="color:#1A7A3C;">CIV</span></div>
+    <div class="loader-spinner">
+      <div class="spinner-dot"></div>
+      <div class="spinner-dot"></div>
+      <div class="spinner-dot"></div>
+    </div>
+    <div class="loader-text">Chargement...</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">BLOG<span>CIV</span></div>
+  <ul class="nav-links">
+    <li><a href="#accueil">Accueil</a></li>
+    <li><a href="#politique">Politique</a></li>
+    <li><a href="#tiktok">TikTok Célèbres</a></li>
+    <li><a href="#peoples">Peoples</a></li>
+    <li><a href="#contact">À propos</a></li>
+  </ul>
+  <button class="nav-cta">S'abonner</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="accueil">
+  <div class="hero-bg"></div>
+  <div class="hero-pattern"></div>
+  <div class="hero-flag">
+    <div class="flag-orange"></div>
+    <div class="flag-white"></div>
+    <div class="flag-green"></div>
+  </div>
+  <div class="hero-badge">📰 Actualités Côte d'Ivoire — En Direct</div>
+  <h1 class="hero-title">
+    L'Actualité <em>Ivoirienne</em>
+    <span class="accent">à Votre Portée</span>
+  </h1>
+  <p class="hero-sub">Des évènements politiques aux tendances TikTok, des people aux affaires qui font le buzz, découvrez tous les secrets d'Abidjan et de la CIV en direct.</p>
+  <div class="hero-actions">
+    <a href="#articles" class="btn-primary">Lire les dernières news</a>
+    <a href="#categories" class="btn-outline">Parcourir les catégories</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">500<span class="metric-unit" style="font-size:1.2rem">k</span></div>
+      <div class="stat-label">Visiteurs/mois</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">2K<span class="metric-unit" style="font-size:1.2rem">+</span></div>
+      <div class="stat-label">Articles publiés</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24h<span class="metric-unit" style="font-size:1.2rem">/7</span></div>
+      <div class="stat-label">Couverture continue</div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Découvrir
+  </div>
+</section>
+
+<!-- KENTE STRIP -->
+<div class="kente-strip"></div>
+
+<!-- TRENDING SECTION -->
+<section class="trending-section fade-in-on-scroll">
+  <div class="trending-grid">
+    <div class="trending-text">
+      <div class="section-label">Pourquoi BlogCIV</div>
+      <h2 class="section-title">Des milliers de lecteurs vous font confiance</h2>
+      <p class="section-desc">Des scandales présidentiels aux vidéos TikTok qui deviennent virales, nous couvrons tout avec rigueur et passion. NewsBreak ivoirien authentique.</p>
+      <div class="socials">
+        <a href="#" class="social-icon">TT</a>
+        <a href="#" class="social-icon">YT</a>
+        <a href="#" class="social-icon">FB</a>
+        <a href="#" class="social-icon">IG</a>
+      </div>
+      <div class="metrics">
+        <div>
+          <div class="metric-num">500<span class="metric-unit">k</span></div>
+          <div class="metric-label">Lecteurs fidèles</div>
+        </div>
+        <div>
+          <div class="metric-num">7<span class="metric-unit">ans</span></div>
+          <div class="metric-label">D'indépendance</div>
+        </div>
+        <div>
+          <div class="metric-num">100<span class="metric-unit">%</span></div>
+          <div class="metric-label">Vérité</div>
+        </div>
+      </div>
+    </div>
+    <div class="features-col">
+      <div class="feature-card">
+        <div class="feature-icon orange">🔥</div>
+        <div>
+          <div class="feature-title">Trending Now</div>
+          <div class="feature-desc">Les sujets les plus chauds du moment en Côte d'Ivoire — politique brûlante, scandales et buzz.</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">📱</div>
+        <div>
+          <div class="feature-title">Réseaux Sociaux</div>
+          <div class="feature-desc">Les TikTokeurs qui font le buzz, les influenceurs emblématiques et les tendances virales.</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon orange">⚡</div>
+        <div>
+          <div class="feature-title">Updates en Direct</div>
+          <div class="feature-desc">Soyez les premiers informés. Nos notifications vous alertent 24/7 sur les news qui changent l'histoire.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARTICLES -->
+<section class="articles-section fade-in-on-scroll" id="articles">
+  <div class="articles-header">
+    <div>
+      <div class="section-label">Nos articles récents</div>
+      <h2 class="section-title">Actualités Brûlantes</h2>
+    </div>
+    <div class="articles-right">De l'actualité politique aux tendances TikTok qui deviennent virales. Tous les secrets de la Côte d'Ivoire.</div>
+  </div>
+  <div class="articles-grid">
+    <div class="article-card article-politique">
+      <div class="bg"></div>
+      <div class="overlay"></div>
+      <div class="category-tag">🏛️ Politique</div>
+      <div class="article-info">
+        <div class="article-title">Élection Présidentielle</div>
+        <div class="article-meta">Derniers rebondissements politiques</div>
+        <div class="article-date">
+          <span class="date-badge">📅 Aujourd'hui</span>
+          <span class="view-count">12k vues</span>
+        </div>
+      </div>
+    </div>
+    <div class="article-card article-tiktok" id="tiktok">
+      <div class="bg"></div>
+      <div class="overlay"></div>
+      <div class="category-tag">🎵 TikTok Célèbres</div>
+      <div class="article-info">
+        <div class="article-title">Nouveau Phénomène TikTok</div>
+        <div class="article-meta">La vidéo qui a décroché 1M vues</div>
+        <div class="article-date">
+          <span class="date-badge">📅 Il y a 2h</span>
+          <span class="view-count">8.5k vues</span>
+        </div>
+      </div>
+    </div>
+    <div class="article-card article-people" id="peoples">
+      <div class="bg"></div>
+      <div class="overlay"></div>
+      <div class="category-tag">⭐ Peoples</div>
+      <div class="article-info">
+        <div class="article-title">Scoop : Couple de Stars</div>
+        <div class="article-meta">La nouvelle relation qui fait le buzz</div>
+        <div class="article-date">
+          <span class="date-badge">📅 Hier</span>
+          <span class="view-count">15k vues</span>
+        </div>
+      </div>
+    </div>
+    <div class="article-card article-tech">
+      <div class="bg"></div>
+      <div class="overlay"></div>
+      <div class="category-tag">💰 Affaires</div>
+      <div class="article-info">
+        <div class="article-title">Deal Milliardaire</div>
+        <div class="article-meta">Les secrets des transactions qui changent l'économie</div>
+        <div class="article-date">
+          <span class="date-badge">📅 Il y a 3j</span>
+          <span class="view-count">20k vues</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="articles-footer">
+    <button class="btn-more">Voir tous les articles</button>
+    <div class="nav-arrows">
+      <button class="arrow-btn">←</button>
+      <button class="arrow-btn">→</button>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories-section fade-in-on-scroll" id="categories">
+  <div class="section-label">Nos catégories</div>
+  <h2 class="section-title">Explorez les Rubriques</h2>
+  <div class="categories-grid">
+    <div class="category-main">
+      <div class="category-label">Parcourez</div>
+      <div class="category-title">Tous les Sujets</div>
+      <div class="category-desc">Politique, TikTok, Peoples, Affaires, Sports... tout ce qui fait le buzz en Côte d'Ivoire en un seul endroit.</div>
+      <button class="category-btn">Explorer</button>
+    </div>
+    <div class="category-card">
+      <div class="cat-bg cat-bg-peoples"></div>
+      <div class="cat-overlay"></div>
+      <div class="cat-content">
+        <div class="cat-icon">⭐</div>
+        <div class="cat-title">Peoples &amp; Célébrités</div>
+        <div class="cat-desc">Les scandales, les amours et les secrets des stars ivoiriennes.</div>
+      </div>
+    </div>
+    <div class="category-card">
+      <div class="cat-bg cat-bg-breaking"></div>
+      <div class="cat-overlay"></div>
+      <div class="cat-content">
+        <div class="cat-icon">⚡</div>
+        <div class="cat-title">Breaking News</div>
+        <div class="cat-desc">Les événements qui bouleversent la Côte d'Ivoire en direct et sans filtre.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KENTE STRIP -->
+<div class="kente-strip"></div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section fade-in-on-scroll">
+  <div style="text-align: center;">
+    <div class="section-label">Restez informé</div>
+    <h2 class="section-title" style="margin: 0 auto 0.5rem; text-align: center;">En 3 étapes simples</h2>
+  </div>
+  <div class="how-grid">
+    <div class="how-step">
+      <span class="step-num">01</span>
+      <div class="step-circle">📲</div>
+      <div class="step-title">Inscrivez-vous</div>
+      <div class="step-desc">Créez votre compte et personnalisez vos préférences — Politique, TikTok, Peoples, tout ce qui vous intéresse.</div>
+    </div>
+    <div class="how-step">
+      <span class="step-num">02</span>
+      <div class="step-circle">🔔</div>
+      <div class="step-title">Recevez les Alertes</div>
+      <div class="step-desc">Notifications en temps réel pour ne pas manquer les scoops qui font le buzz et les actualités brûlantes.</div>
+    </div>
+    <div class="how-step">
+      <span class="step-num">03</span>
+      <div class="step-circle">📰</div>
+      <div class="step-title">Lisez &amp; Partagez</div>
+      <div class="step-desc">Découvrez les articles exclusifs, commentez et partagez avec votre communauté sur les réseaux sociaux.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section fade-in-on-scroll">
+  <div class="section-label">Témoignages</div>
+  <h2 class="section-title" style="max-width: 500px;">Ce que disent nos lecteurs</h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"BlogCIV m'a fait découvrir des scoops que personne d'autre ne couvre. L'actualité politique devient passionnante avec eux!"</div>
+      <div class="testi-author">
+        <div class="author-avatar av-orange">KA</div>
+        <div>
+          <div class="author-name">Kouassi Aman</div>
+          <div class="author-loc">Abidjan, CIV</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Les tendances TikTok, les people, les scoop politiques... tout en un seul endroit! Je recommande vivement!"</div>
+      <div class="testi-author">
+        <div class="author-avatar av-green">ZL</div>
+        <div>
+          <div class="author-name">Zélia Laurent</div>
+          <div class="author-loc">Yamoussoukro, CIV</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Première source d'info fiable pour tout ce qui se passe en Côte d'Ivoire. Aucune fake news, que du vrai!"</div>
+      <div class="testi-author">
+        <div class="author-avatar av-dark">MP</div>
+        <div>
+          <div class="author-name">Moussa Petit</div>
+          <div class="author-loc">Bouaké, CIV</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section fade-in-on-scroll">
+  <div class="section-label" style="color: rgba(255,255,255,0.7);">Prêt à découvrir ?</div>
+  <h2 class="cta-title">Rejoignez Notre Communauté<br>de Lecteurs</h2>
+  <p class="cta-sub">500k+ lecteurs font confiance à BlogCIV pour les actualités vraies, les scoops exclusifs et les tendances virales.</p>
+  <div class="cta-actions">
+    <button class="cta-btn-white">S'inscrire Maintenant</button>
+    <button class="cta-btn-ghost">Parcourir les Articles</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="flag-stripe">
+  <div class="stripe-o"></div>
+  <div class="stripe-w"></div>
+  <div class="stripe-g"></div>
+</div>
+<footer>
+  <div class="footer-brand">
+    <div class="logo">BLOG<span>CIV</span></div>
+    <p class="footer-tagline">Votre source fiable pour l'actualité ivoirienne, les tendances TikTok, les people et tout ce qui fait le buzz en Côte d'Ivoire.</p>
+  </div>
+  <div>
+    <div class="footer-col-title">Catégories</div>
+    <ul class="footer-links">
+      <li><a href="#">Politique</a></li>
+      <li><a href="#">TikTok Célèbres</a></li>
+      <li><a href="#">Peoples</a></li>
+      <li><a href="#">Affaires</a></li>
+      <li><a href="#">Sports</a></li>
+      <li><a href="#">Divertissement</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">Sections</div>
+    <ul class="footer-links">
+      <li><a href="#">Articles</a></li>
+      <li><a href="#">Breaking News</a></li>
+      <li><a href="#">Scoops</a></li>
+      <li><a href="#">Vidéos</a></li>
+      <li><a href="#">Podcast</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">À Propos</div>
+    <ul class="footer-links">
+      <li><a href="#contact">Qui sommes-nous</a></li>
+      <li><a href="#contact">Nous Contacter</a></li>
+      <li><a href="#">Publicité</a></li>
+      <li><a href="#">Mentions Légales</a></li>
+      <li><a href="#">Politique de Confidentialité</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2025 BlogCIV. Tous droits réservés.</span>
+  <span>🇨🇮 L'actualité vraie de Côte d'Ivoire</span>
+</div>
+
+<script>
+  // Dark Mode Toggle
+  const lightBtn = document.getElementById('lightBtn');
+  const darkBtn = document.getElementById('darkBtn');
+  const body = document.body;
+
+  // Check saved preference
+  const savedMode = localStorage.getItem('theme-mode') || 'light';
+  if (savedMode === 'dark') {
+    body.classList.add('dark-mode');
+    lightBtn.classList.remove('active');
+    darkBtn.classList.add('active');
+  }
+
+  lightBtn.addEventListener('click', () => {
+    body.classList.remove('dark-mode');
+    lightBtn.classList.add('active');
+    darkBtn.classList.remove('active');
+    localStorage.setItem('theme-mode', 'light');
+  });
+
+  darkBtn.addEventListener('click', () => {
+    body.classList.add('dark-mode');
+    darkBtn.classList.add('active');
+    lightBtn.classList.remove('active');
+    localStorage.setItem('theme-mode', 'dark');
+  });
+
+  // Scroll Animation
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.fade-in-on-scroll').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
